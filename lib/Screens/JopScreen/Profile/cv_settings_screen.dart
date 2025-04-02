@@ -1,10 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:jop_project/Models/experience_model.dart';
 import 'package:jop_project/Models/searcher_model.dart';
 import 'package:jop_project/Models/skils_model.dart';
-import 'package:jop_project/Providers/Desires/desires_provider.dart';
+import 'package:jop_project/Providers/interest/interest_provider.dart';
 import 'package:jop_project/Providers/Experience/experience_provider.dart';
 import 'package:jop_project/Providers/SignUp/searcher_signin_login_provider.dart';
 import 'package:jop_project/Providers/skills/skills_provider.dart';
@@ -19,7 +21,6 @@ import 'package:jop_project/utils/pdf_generator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:intl/intl.dart' as intl;
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 
 class CVSettingsScreen extends StatefulWidget {
@@ -196,7 +197,6 @@ class _CVSettingsScreenState extends State<CVSettingsScreen> {
         await newMethod(context).then(
           (value) async {
             await showDialog(
-                // ignore: use_build_context_synchronously
                 context: context,
                 builder: (context) => Container(
                       color: const Color.fromARGB(83, 255, 255, 255),
@@ -211,17 +211,7 @@ class _CVSettingsScreenState extends State<CVSettingsScreen> {
                     )).timeout(
               const Duration(seconds: 3),
               onTimeout: () {
-                // // ignore: use_build_context_synchronously
-                // if (Navigator.canPop(context)) {
-                //   // ignore: use_build_context_synchronously
-                //   Navigator.pop(context);
-                // }
-                // // if (Navigator.canPop(context)) {
-                // // ignore: use_build_context_synchronously
-                // Navigator.pop(context);
-                // }
                 Navigator.pushAndRemoveUntil(
-                  // ignore: use_build_context_synchronously
                   context,
                   MaterialPageRoute<void>(
                       builder: (BuildContext context) => const HomeScreen()),
@@ -342,7 +332,6 @@ class _CVSettingsScreenState extends State<CVSettingsScreen> {
   @override
   void dispose() {
     // تنظيف الcontrollers
-    // nameController.dispose();
     ageController.dispose();
     birthPlaceController.dispose();
     fullNameController.dispose();
@@ -406,44 +395,62 @@ class _CVSettingsScreenState extends State<CVSettingsScreen> {
           typeWorkHours: typeWorkHours,
           userId: null,
         );
-        final SkilsModel skilsModel = SkilsModel(
-          id: 0,
-          name: skillsController.text,
-        );
-        final SkilsModel desiresModel = SkilsModel(
-          id: 0,
-          name: desiresController.text,
-        );
-        final List<ExperienceModel> experiencesJson = experiences
-            .map((e) => ExperienceModel.fromJson(e.toJson()))
-            .toList();
-
-        await Provider.of<SkillsProvider>(context, listen: false)
-            .addSkill(skilsModel: skilsModel)
-            .then(
+        await Future.value(addSkils());
+        await Future.value(addDesires());
+        await Future.value(addExperiences()).then(
           (value) async {
-            await Provider.of<DesiresProvider>(context, listen: false)
-                .addDesires(desiresModel: desiresModel)
-                .then(
-              (value) async {
-                for (var experience in experiencesJson) {
-                  await Provider.of<ExperienceProvider>(context, listen: false)
-                      .addExperiences(experiencesModel: experience);
-                  // await Future.delayed(Duration(seconds: 2));
-                  // log(experience.nameExper.toString(),
-                  // name: 'experience experience experience');
-                }
-              },
-            ).then(
-              (value) async {
-                await searcherProvider.updateSearchers(
-                    searchersModel: searcher);
-              },
-            );
+            await searcherProvider.updateSearchers(searchersModel: searcher);
           },
         );
+        // await addSkils();
+
+        // await addDesires();
+        // await addExperiences().then(
+        //   (value) async {
+        //     await searcherProvider.updateSearchers(searchersModel: searcher);
+        //   },
+        // );
       },
     );
+  }
+
+  Future<void> addSkils() async {
+    List<SkilsModel> skilsModelList = skillsController.text
+        .split(',')
+        .map((e) => SkilsModel(id: 0, name: e))
+        .toList();
+    for (int i = 0; i < skilsModelList.length; i++) {
+      var element = skilsModelList[i];
+      await Provider.of<SkillsProvider>(context, listen: false).addSkill(
+        skilsModel: element,
+        searcherId: searcherProvider.currentSearcher!.id!,
+      );
+    }
+  }
+
+  Future<void> addExperiences() async {
+    final List<ExperienceModel> experiencesJson =
+        experiences.map((e) => ExperienceModel.fromJson(e.toJson())).toList();
+    for (var experience in experiencesJson) {
+      await Provider.of<ExperienceProvider>(context, listen: false)
+          .addExperiences(
+        experiencesModel: experience,
+        searcherId: searcherProvider.currentSearcher!.id!,
+      );
+    }
+  }
+
+  Future<void> addDesires() async {
+    List<SkilsModel> desiresModelList = desiresController.text
+        .split(',')
+        .map((e) => SkilsModel(id: 0, name: e))
+        .toList();
+    for (var element in desiresModelList) {
+      await Provider.of<InterestProvider>(context, listen: false).addDesires(
+        desiresModel: element,
+        searcherId: searcherProvider.currentSearcher!.id!,
+      );
+    }
   }
 
   SizedBox body(BuildContext context) {
@@ -630,7 +637,6 @@ class _CVSettingsScreenState extends State<CVSettingsScreen> {
                           TextButton(
                             onPressed: () {
                               // Here you can send experiences list to API
-                              // TODO: Add API call to save experiences
                               // Add experience logic here
                               if (formKeyExperience.currentState!.validate()) {
                                 ExperienceModel experience = ExperienceModel(
@@ -666,17 +672,14 @@ class _CVSettingsScreenState extends State<CVSettingsScreen> {
                                     duration: const Duration(seconds: 2),
                                   ),
                                 );
-                                print(
-                                    'Experiences to save: ${experiences.length}');
                                 for (var exp in experiences) {
-                                  print(exp.toJson());
+                                  log(exp.toJson().toString(), name: 'exp IF');
                                 }
                                 Navigator.pop(contx);
                               } else {
-                                print(
-                                    'Experiences to save: ${experiences.length}');
                                 for (var exp in experiences) {
-                                  print(exp.toJson());
+                                  log(exp.toJson().toString(),
+                                      name: 'exp ELSE');
                                 }
                                 Navigator.pop(contx);
                               }
@@ -692,116 +695,7 @@ class _CVSettingsScreenState extends State<CVSettingsScreen> {
                 customTextFild(
                   hintText: l10n.desires,
                   controller: desiresController,
-                  // suffixIcon: const Icon(Icons.arrow_drop_down),
                 ),
-                // Padding(
-                //   padding: const EdgeInsets.all(16.0),
-                //   child: GestureDetector(
-                //     onTap: _showSkillsDialog,
-                //     child: Container(
-                //       padding: const EdgeInsets.all(16),
-                //       decoration: BoxDecoration(
-                //         border: Border.all(color: Colors.grey),
-                //         borderRadius: BorderRadius.circular(8),
-                //       ),
-                //       child: Row(
-                //         mainAxisAlignment: MainAxisAlignment.end,
-                //         children: [
-                //           if (selectedSkills.isEmpty)
-                //             Text(
-                //               'المهارات',
-                //               style: Theme.of(context).textTheme.bodyLarge,
-                //             ),
-                //           if (selectedSkills.isNotEmpty)
-                //             Expanded(
-                //               child: Wrap(
-                //                 spacing: 8,
-                //                 runSpacing: 8,
-                //                 children: selectedSkills
-                //                     .map((skill) => Chip(
-                //                           label: Text(skill),
-                //                         ))
-                //                     .toList(),
-                //               ),
-                //             ),
-                //           const Icon(Icons.arrow_drop_down),
-                //         ],
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                // Padding(
-                //   padding: const EdgeInsets.all(16.0),
-                //   child: GestureDetector(
-                //     onTap: _showExperiencesDialog,
-                //     child: Container(
-                //       padding: const EdgeInsets.all(16),
-                //       decoration: BoxDecoration(
-                //         border: Border.all(color: Colors.grey),
-                //         borderRadius: BorderRadius.circular(8),
-                //       ),
-                //       child: Row(
-                //         mainAxisAlignment: MainAxisAlignment.end,
-                //         children: [
-                //           if (selectedExperiences.isEmpty)
-                //             Text(
-                //               'الخبرات',
-                //               style: Theme.of(context).textTheme.bodyLarge,
-                //             ),
-                //           if (selectedExperiences.isNotEmpty)
-                //             Expanded(
-                //               child: Wrap(
-                //                 spacing: 8,
-                //                 runSpacing: 8,
-                //                 children: selectedExperiences
-                //                     .map((experience) => Chip(
-                //                           label: Text(experience),
-                //                         ))
-                //                     .toList(),
-                //               ),
-                //             ),
-                //           const Icon(Icons.arrow_drop_down),
-                //         ],
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                // Padding(
-                //   padding: const EdgeInsets.all(16.0),
-                //   child: GestureDetector(
-                //     onTap: _showDesiresDialog,
-                //     child: Container(
-                //       padding: const EdgeInsets.all(16),
-                //       decoration: BoxDecoration(
-                //         border: Border.all(color: Colors.grey),
-                //         borderRadius: BorderRadius.circular(8),
-                //       ),
-                //       child: Row(
-                //         mainAxisAlignment: MainAxisAlignment.end,
-                //         children: [
-                //           if (selectedDesires.isEmpty)
-                //             Text(
-                //               'الرغبات',
-                //               style: Theme.of(context).textTheme.bodyLarge,
-                //             ),
-                //           if (selectedDesires.isNotEmpty)
-                //             Expanded(
-                //               child: Wrap(
-                //                 spacing: 8,
-                //                 runSpacing: 8,
-                //                 children: selectedDesires
-                //                     .map((desire) => Chip(
-                //                           label: Text(desire),
-                //                         ))
-                //                     .toList(),
-                //               ),
-                //             ),
-                //           const Icon(Icons.arrow_drop_down),
-                //         ],
-                //       ),
-                //     ),
-                //   ),
-                // ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: GestureDetector(
@@ -958,124 +852,99 @@ class _CVSettingsScreenState extends State<CVSettingsScreen> {
                                 ),
                               ),
                             ),
-                            if (searcherProvider.currentSearcher?.img != null)
-                              // Image.network(
-                              //     searcherProvider.currentSearcher!.img!),
-                              if (profileImageController.text.isEmpty ||
-                                  _imageFile == null) ...[
-                                InkWell(
-                                  onTap: _selectImage,
-                                  child: Center(
-                                    child: Container(
-                                      width: 100,
-                                      height: 100,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
+                            // if (searcherProvider.currentSearcher?.img != null)
+                            // Image.network(
+                            //     searcherProvider.currentSearcher!.img!),
+                            if (profileImageController.text.isEmpty ||
+                                _imageFile == null) ...[
+                              InkWell(
+                                onTap: _selectImage,
+                                child: Center(
+                                  child: Container(
+                                    width: 100,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.white,
+                                      border: Border.all(
                                         color: Colors.white,
-                                        border: Border.all(
-                                          color: Colors.white,
-                                          width: 2,
-                                        ),
+                                        width: 2,
                                       ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(50),
-                                        child:
-                                            //  imagePath != null && imagePath != ''
-                                            //     ?
-                                            Image.network(
-                                          searcherProvider
-                                                  .currentSearcher!.img ??
-                                              '',
-                                          fit: BoxFit.contain,
-                                          filterQuality: FilterQuality.high,
-                                          loadingBuilder: (context, child,
-                                              loadingProgress) {
-                                            if (loadingProgress == null) {
-                                              return child;
-                                            }
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(50),
+                                      child:
+                                          //  imagePath != null && imagePath != ''
+                                          //     ?
+                                          Image.network(
+                                        searcherProvider.currentSearcher!.img ??
+                                            '',
+                                        fit: BoxFit.contain,
+                                        filterQuality: FilterQuality.high,
+                                        loadingBuilder:
+                                            (context, child, loadingProgress) {
+                                          if (loadingProgress == null) {
+                                            return child;
+                                          }
 
-                                            return Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Text(loadingProgress
-                                                            .expectedTotalBytes !=
-                                                        null
-                                                    ? (loadingProgress
-                                                                .cumulativeBytesLoaded /
-                                                            loadingProgress
-                                                                .expectedTotalBytes!)
-                                                        .toStringAsFixed(2)
-                                                    : ''),
-                                                const CircularProgressIndicator(),
-                                              ],
-                                            );
-                                          },
-                                          errorBuilder:
-                                              (context, error, stackTrace) {
-                                            return const Icon(
-                                              Icons.person,
-                                              size: 50,
-                                            );
-                                          },
-                                        ),
-                                        // : const Icon(
-                                        //     Icons.person,
-                                        //     size: 50,
-                                        //   ),
+                                          return Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Text(loadingProgress
+                                                          .expectedTotalBytes !=
+                                                      null
+                                                  ? (loadingProgress
+                                                              .cumulativeBytesLoaded /
+                                                          loadingProgress
+                                                              .expectedTotalBytes!)
+                                                      .toStringAsFixed(2)
+                                                  : ''),
+                                              const CircularProgressIndicator(),
+                                            ],
+                                          );
+                                        },
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                          return const Icon(
+                                            Icons.person,
+                                            size: 50,
+                                          );
+                                        },
                                       ),
                                     ),
                                   ),
-
-                                  //  AbsorbPointer(
-                                  //   child: customTextFild(
-                                  //     hintText: "الصورة الشخصية",
-                                  //     controller: profileImageController,
-                                  //     suffixIcon: const Icon(Icons.image),
-                                  //   ),
-                                  // ),
-                                )
-                              ] else ...[
-                                InkWell(
-                                  onTap: _selectImage,
-                                  child: Center(
-                                    child: Container(
-                                      width: 100,
-                                      height: 100,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
+                                ),
+                              )
+                            ] else ...[
+                              InkWell(
+                                onTap: _selectImage,
+                                child: Center(
+                                  child: Container(
+                                    width: 100,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.white,
+                                      border: Border.all(
                                         color: Colors.white,
-                                        border: Border.all(
-                                          color: Colors.white,
-                                          width: 2,
-                                        ),
+                                        width: 2,
                                       ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(50),
-                                        child: Image.file(
-                                          _imageFile ??
-                                              File(profileImageController.text),
-                                          fit: BoxFit.contain,
-                                          // filterQuality: FilterQuality.high,
-                                          // errorBuilder:
-                                          //     (context, error, stackTrace) {
-                                          //   return const Icon(
-                                          //     Icons.person,
-                                          //     size: 50,
-                                          //   );
-                                          // },
-                                        ),
-                                        // : const Icon(
-                                        //     Icons.person,
-                                        //     size: 50,
-                                        //   ),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(50),
+                                      child: Image.file(
+                                        _imageFile ??
+                                            File(profileImageController.text),
+                                        fit: BoxFit.contain,
                                       ),
                                     ),
                                   ),
-                                )
-                              ],
+                                ),
+                              )
+                            ],
                             SizedBox(
                               width: SizeConfig.screenW! / 2,
                               child: ElevatedButton(
@@ -1092,22 +961,6 @@ class _CVSettingsScreenState extends State<CVSettingsScreen> {
                     ),
                   ],
                 )),
-            // Positioned(
-            //     top: 0,
-            //     left: 0,
-            //     right: 0,
-            //     child: Container(
-            //       width: SizeConfig.screenW! / 2,
-            //       height: SizeConfig.screenH! / 6,
-            //       decoration: BoxDecoration(
-            //           image: DecorationImage(
-            //         image: searcherProvider.currentSearcher?.img != null
-            //             ? NetworkImage(searcherProvider.currentSearcher!.img!)
-            //             : AssetImage(
-            //                 'assets/images/profile.png',
-            //               ),
-            //       )),
-            //     )),
           ],
         );
       }),

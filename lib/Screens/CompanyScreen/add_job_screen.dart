@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:jop_project/Models/job_advertisement_model.dart';
 import 'package:jop_project/Providers/Job/job_provider.dart';
 import 'package:jop_project/Providers/SignUp/company_signin_login_provider.dart';
+import 'package:jop_project/Providers/locale_provider.dart';
 import 'package:jop_project/components/background.dart';
 import 'package:jop_project/components/preferences_selector.dart';
 import 'package:jop_project/constants.dart';
@@ -379,92 +380,97 @@ class _InfoBodyWidgetState extends State<InfoBodyWidget> {
 
   Widget _buildInfoItem(IconData icon, String title,
       {required TextEditingController controller, bool enabled = true}) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: SizedBox(
-        height: (SizeConfig.screenW! <= 750) ? 35 : 35,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Flexible(
-              child: Directionality(
-                textDirection: TextDirection.rtl,
-                child: TextFormField(
-                  enabled: enabled,
-                  // autofocus: true,
+    return Directionality(
+      textDirection: context.read<LocaleProvider>().locale?.languageCode == 'en'
+          ? TextDirection.ltr
+          : TextDirection.ltr,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        child: SizedBox(
+          height: (SizeConfig.screenW! <= 750) ? 35 : 35,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Flexible(
+                child: Directionality(
                   textDirection: TextDirection.rtl,
-                  //style: const TextStyle(fontSize: 20),
-                  controller: controller,
-                  textAlign: TextAlign.right,
-                  decoration: InputDecoration(
-                    isDense: true,
-                    // suffixIcon: const Icon(
-                    //   Icons.edit,
-                    //   color: Colors.black,
-                    //   size: 11,
-                    // ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 0.0, horizontal: 6.0),
-                    border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(25),
-                            bottomLeft: Radius.circular(25))),
-                    hintText: title,
-                    hintStyle: const TextStyle(
-                      color: Color.fromARGB(90, 0, 0, 0),
-                      fontSize: 22,
+                  child: TextFormField(
+                    enabled: enabled,
+                    // autofocus: true,
+                    textDirection: TextDirection.rtl,
+                    //style: const TextStyle(fontSize: 20),
+                    controller: controller,
+                    textAlign: TextAlign.right,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      // suffixIcon: const Icon(
+                      //   Icons.edit,
+                      //   color: Colors.black,
+                      //   size: 11,
+                      // ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 0.0, horizontal: 6.0),
+                      border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(25),
+                              bottomLeft: Radius.circular(25))),
+                      hintText: title,
+                      hintStyle: const TextStyle(
+                        color: Color.fromARGB(90, 0, 0, 0),
+                        fontSize: 22,
+                      ),
+                      errorStyle: const TextStyle(
+                        fontSize: 5,
+                      ),
                     ),
-                    errorStyle: const TextStyle(
-                      fontSize: 5,
-                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'الحقل مطلوب *';
+                      }
+                      return null;
+                    },
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'الحقل مطلوب *';
-                    }
-                    return null;
-                  },
                 ),
               ),
-            ),
-            Container(
-              width: defaultPadding * 7,
-              decoration: const BoxDecoration(
-                color: Color(0xFF6B8CC7),
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(15),
-                    bottomRight: Radius.circular(15)),
+              Container(
+                width: defaultPadding * 7,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF6B8CC7),
+                  borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(15),
+                      bottomRight: Radius.circular(15)),
+                ),
+                padding:
+                    const EdgeInsets.only(bottom: 7, top: 7, left: 3, right: 5),
+                margin: const EdgeInsets.symmetric(horizontal: 2),
+                child: Text(
+                  title,
+                  textDirection: TextDirection.rtl,
+                  textAlign: TextAlign.start,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
+                ),
               ),
-              padding:
-                  const EdgeInsets.only(bottom: 7, top: 7, left: 3, right: 5),
-              margin: const EdgeInsets.symmetric(horizontal: 2),
-              child: Text(
-                title,
-                textDirection: TextDirection.rtl,
-                textAlign: TextAlign.start,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
                   color: Colors.white,
-                  fontSize: 14,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: Icon(
+                  icon,
+                  color: const Color(0xFF6B8CC7),
+                  size: 20,
                 ),
               ),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 4),
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: Icon(
-                icon,
-                color: const Color(0xFF6B8CC7),
-                size: 20,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

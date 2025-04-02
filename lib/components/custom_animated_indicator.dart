@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class AnimatedProgressBar extends StatefulWidget {
@@ -8,7 +7,7 @@ class AnimatedProgressBar extends StatefulWidget {
       {super.key, this.isBorder = false, this.isFilled = false});
 
   @override
-  _AnimatedProgressBarState createState() => _AnimatedProgressBarState();
+  State<AnimatedProgressBar> createState() => _AnimatedProgressBarState();
 }
 
 class _AnimatedProgressBarState extends State<AnimatedProgressBar>
@@ -18,6 +17,9 @@ class _AnimatedProgressBarState extends State<AnimatedProgressBar>
 
   @override
   void initState() {
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   const InitialScreen();
+    // });
     super.initState();
     _controller = AnimationController(
       vsync: this,

@@ -1,12 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:jop_project/Providers/SignUp/searcher_signin_login_provider.dart';
 import 'package:jop_project/Screens/JopScreen/Profile/components/background_profile.dart';
 import 'package:jop_project/l10n/l10n.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-import 'package:provider/provider.dart';
 
 class PDFViewerScreen extends StatelessWidget {
   final String filePath;
@@ -32,7 +30,7 @@ class PDFViewerScreen extends StatelessWidget {
       title: fileName,
       actions: [
         IconButton(
-          icon:  const Icon(Icons.share),
+          icon: const Icon(Icons.share),
           onPressed: () {
             Share.shareXFiles([XFile(filePath)], text: l10n.cv);
           },

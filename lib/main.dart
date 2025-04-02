@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:jop_project/Controller/Firebase_Services/fcm_service.dart';
 import 'package:jop_project/Controller/Firebase_Services/notifications_service.dart';
 import 'package:jop_project/Providers/Caht-firebase_database/chat_provider_firebase_database.dart';
-import 'package:jop_project/Providers/Desires/desires_provider.dart';
+import 'package:jop_project/Providers/interest/interest_provider.dart';
 import 'package:jop_project/Providers/Experience/experience_provider.dart';
 import 'package:jop_project/Providers/Job/job_provider.dart';
 import 'package:jop_project/Providers/Orders/order_provider.dart';
@@ -17,6 +17,7 @@ import 'package:jop_project/Providers/skills/skills_provider.dart';
 import 'package:jop_project/Screens/CompanyScreen/company_dashboard_screen.dart';
 import 'package:jop_project/Screens/JopScreen/Home/home_screen.dart';
 import 'package:jop_project/Screens/Onboarding/onboarding_screen.dart';
+import 'package:jop_project/Screens/Welcome/welcome_screen.dart';
 import 'package:jop_project/components/statistics/presentation/provider/statistics_provider.dart';
 import 'package:jop_project/l10n/l10n.dart';
 import 'package:jop_project/size_config.dart';
@@ -78,16 +79,16 @@ class MyApp extends StatelessWidget {
     SizeConfig().init(context);
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => LocaleProvider(prefs)),
+        ChangeNotifierProvider(create: (_) => LocaleProvider(prefs)..init()),
         ChangeNotifierProvider(create: (_) => SettingsProvider(prefs)),
         ChangeNotifierProvider(create: (_) => CompanySigninLoginProvider()),
         ChangeNotifierProvider(create: (_) => CountryProvider()),
-        ChangeNotifierProvider(create: (_) => JobsProvider()..getJobs()),
+        ChangeNotifierProvider(create: (_) => JobsProvider() /*..getJobs()*/),
         ChangeNotifierProvider(create: (_) => SearcherSigninLoginProvider()),
         ChangeNotifierProvider(
             create: (_) => CompaniesProvider()..getAllCompanies()),
         ChangeNotifierProvider(create: (_) => SkillsProvider()..getSkills()),
-        ChangeNotifierProvider(create: (_) => DesiresProvider()..getDesires()),
+        ChangeNotifierProvider(create: (_) => InterestProvider()..getDesires()),
         ChangeNotifierProvider(
             create: (_) => ExperienceProvider()..getExperiences()),
         ChangeNotifierProvider(create: (_) => OrderProvider()..getOrders()),
@@ -143,9 +144,9 @@ class MyApp extends StatelessWidget {
             }
             return const Locale('en');
           },
-
-          // home: const CustomAnimatedIndicator(),
-          home: const InitialScreen(),
+          home: localeProvider.seenOnboarding
+              ? const InitialScreen()
+              : const OnboardingScreen(),
         );
       }),
     );
@@ -163,13 +164,16 @@ class _InitialScreenState extends State<InitialScreen> {
   NotificationsService notificationsService = NotificationsService();
   @override
   void initState() {
-    notificationsService.requestNotificationPermission();
-    notificationsService.getDeviceToken();
-    notificationsService.firebaseInit(context);
-    notificationsService.setupInteractMessage(context);
-    FcmService.firebaseInit();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notificationsService.requestNotificationPermission();
+      notificationsService.getDeviceToken();
+      notificationsService.firebaseInit(context);
+      notificationsService.setupInteractMessage(context);
+      FcmService.firebaseInit();
+      _initializeApp();
+    });
+
     super.initState();
-    _initializeApp();
   }
 
   Future<void> _initializeApp() async {
@@ -202,63 +206,13 @@ class _InitialScreenState extends State<InitialScreen> {
     } else {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => const OnboardingScreen(),
-          // WelcomeScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const WelcomeScreen()),
       );
     }
   }
 
-  // Future<void> _initializeApp() async {
-  //   final companyProvider =
-  //       Provider.of<CompanySigninLoginProvider>(context, listen: false);
-  //   final searcherProvider =
-  //       Provider.of<SearcherSigninLoginProvider>(context, listen: false);
-  //   await companyProvider.initializeApp();
-  //   await searcherProvider.initializeApp();
-  //   if (!mounted) return;
-  //   // التحقق من وجود شركة مسجلة الدخول
-  //   if (companyProvider.currentCompany != null) {
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (context) => CompanyDashboardScreen(
-  //           company: companyProvider.currentCompany!,
-  //         ),
-  //       ),
-  //     );
-  //     // التحقق من وجود موظف مسجل الدخول
-  //   } else if (searcherProvider.currentSearcher != null) {
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (context) => const HomeScreen(),
-  //       ),
-  //     );
-  //   } else {
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (context) => const OnboardingScreen(),
-  //       ),
-  //     );
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
-    return const AnimatedProgressBar();
-    // Scaffold(
-    //   body: Column(
-    //     mainAxisAlignment: MainAxisAlignment.center,
-    //     crossAxisAlignment: CrossAxisAlignment.center,
-    //     children: [
-    //       CircularProgressIndicator(),
-    //       AnimatedProgressBar(),
-    //       // CustomAnimatedIndicator(),
-    //     ],
-    //   ),
-    // );
+    return Container(color: Colors.white, child: const AnimatedProgressBar());
   }
 }

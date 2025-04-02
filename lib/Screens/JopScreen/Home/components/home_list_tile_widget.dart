@@ -1,9 +1,7 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jop_project/Models/company_model.dart';
-import 'package:jop_project/Providers/Caht-firebase_database/chat_provider_firebase_database.dart';
 import 'package:jop_project/Providers/SignUp/searcher_signin_login_provider.dart';
 import 'package:jop_project/constants.dart';
 import 'package:jop_project/Screens/ChatScreen/chat_screen.dart';

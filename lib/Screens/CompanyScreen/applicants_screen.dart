@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:jop_project/Models/job_advertisement_model.dart';
 import 'package:jop_project/Models/orders_model.dart';
 import 'package:jop_project/Models/searcher_model.dart';
-import 'package:jop_project/Providers/Job/job_provider.dart';
 import 'package:jop_project/Providers/Orders/order_provider.dart';
 import 'package:jop_project/Providers/Searchers/searchers_provider.dart';
 import 'package:jop_project/Providers/SignUp/company_signin_login_provider.dart';

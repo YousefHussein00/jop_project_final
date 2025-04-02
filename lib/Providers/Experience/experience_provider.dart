@@ -45,24 +45,26 @@ class ExperienceProvider extends ChangeNotifier {
   }
 
   Future<void> addExperiences(
-      {required ExperienceModel experiencesModel}) async {
+      {required ExperienceModel experiencesModel,
+      required int searcherId}) async {
     try {
       _isLoading = true;
       _error = null;
       notifyListeners();
       experiencesModel.id = 0;
       final response = await _apiController.post<ExperienceModel>(
-        endpoint: 'Experiences',
+        endpoint: 'Experiences/PostExpier_us?searcherId=$searcherId',
         data: experiencesModel.toJson(),
         fromJson: ExperienceModel.fromJson,
       );
+      log(response.toJson().toString(), name: 'response_add_experiences');
       if (response.id != null) {
-        log(_experiences.length.toString(),
-            name: '_experiences Befor add _experiences');
-        log(response.nameExper.toString(), name: 'response_add_experiences');
+        // log(_experiences.length.toString(),
+        //     name: '_experiences Befor add _experiences');
+        // log(response.nameExper.toString(), name: 'response_add_experiences');
         _experiences.add(response);
-        log(_experiences.length.toString(),
-            name: '_experiences after add _experiences');
+        // log(_experiences.length.toString(),
+        //     name: '_experiences after add _experiences');
         getExperiences();
       } else {
         throw Exception('فشل إنشاء الخبرة حاول مجدداً');

@@ -1,9 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:jop_project/Models/company_model.dart';
 import 'package:jop_project/Providers/Job/job_provider.dart';
-import 'package:jop_project/Providers/Companies/companies_provider.dart';
+// import 'package:jop_project/Providers/Companies/companies_provider.dart';
+import 'package:jop_project/Providers/SignUp/searcher_signin_login_provider.dart';
 import 'package:jop_project/Screens/JopScreen/Home/components/home_list_tile_widget.dart';
 import 'package:jop_project/Screens/JopScreen/Jop_Info/jop_info_screen.dart';
 import 'package:jop_project/components/custom_popup_menu.dart';
@@ -19,7 +18,8 @@ class HomeBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final companyProvider = Provider.of<CompaniesProvider>(context);
+    // final companyProvider = Provider.of<CompaniesProvider>(context);
+    final searcherProvider = Provider.of<SearcherSigninLoginProvider>(context);
     final l10n = AppLocalizations.of(context);
 
     return SafeArea(
@@ -121,93 +121,115 @@ class HomeBody extends StatelessWidget {
 
                                 return !jobsProvider.isLoading
                                     ? HomeListTileWidget(
-                                        companyId: (companyProvider.companies
-                                                    .any((element) {
-                                          return element.id == jop.companyId;
-                                        })
-                                                ? companyProvider.companies
-                                                    .where((element) {
-                                                    return element.id ==
-                                                        jobsProvider.jobs[index]
-                                                            .companyId;
-                                                  }).first
-                                                // toList()[0]
-                                                : CompanyModel(
-                                                    nameCompany: l10n.nothing,
-                                                  ))
-                                            .id
-                                            .toString(),
-                                        companyModel: (companyProvider.companies
-                                                .any((element) {
-                                          // log(element.id.toString());
-                                          // log((element.id == jop.companyId)
-                                          //     .toString());
-                                          return element.id == jop.companyId;
-                                        })
-                                            ? companyProvider.companies
-                                                .where((element) {
-                                                return element.id ==
-                                                    jobsProvider
-                                                        .jobs[index].companyId;
-                                              }).first
-                                            : CompanyModel(
-                                                nameCompany: l10n.nothing,
-                                              )),
-                                        phone: companyProvider.companies
-                                                .where((element) {
-                                                  return element.id ==
-                                                          jop.companyId &&
-                                                      element.phone != null;
-                                                })
-                                                .toList()
-                                                .isNotEmpty
-                                            ? companyProvider.companies
-                                                .where((element) {
-                                                  return element.id ==
-                                                          jop.companyId &&
-                                                      element.phone != null;
-                                                })
-                                                .toList()
-                                                .first
-                                                .phone!
-                                            : companyProvider.companies
-                                                    .where((element) {
-                                                      return element.id ==
-                                                              jop.companyId &&
-                                                          element.phone2 !=
-                                                              null;
-                                                    })
-                                                    .toList()
-                                                    .isNotEmpty
-                                                ? companyProvider.companies
-                                                    .where((element) {
-                                                      return element.id ==
-                                                              jop.companyId &&
-                                                          element.phone2 !=
-                                                              null;
-                                                    })
-                                                    .toList()
-                                                    .first
-                                                    .phone2
-                                                    .toString()
-                                                : l10n.nothing,
+                                        companyId: jop.companyId.toString(),
+                                        // (companyProvider.companies
+                                        //             .any((element) {
+                                        //   return element.id == jop.companyId;
+                                        // })
+                                        //         ? companyProvider.companies
+                                        //             .where((element) {
+                                        //             return element.id ==
+                                        //                 jobsProvider.jobs[index]
+                                        //                     .companyId;
+                                        //           }).first
+                                        //         // toList()[0]
+                                        //         : CompanyModel(
+                                        //             nameCompany: l10n.nothing,
+                                        //           ))
+                                        //     .id
+                                        //     .toString(),
+                                        companyModel: jop.company ??
+                                            CompanyModel(
+                                              nameCompany: l10n.nothing,
+                                            ),
+                                        // (companyProvider.companies
+                                        //         .any((element) {
+                                        //   // log(element.id.toString());
+                                        //   // log((element.id == jop.companyId)
+                                        //   //     .toString());
+                                        //   return element.id == jop.companyId;
+                                        // })
+                                        //     ? companyProvider.companies
+                                        //         .where((element) {
+                                        //         return element.id ==
+                                        //             jobsProvider
+                                        //                 .jobs[index].companyId;
+                                        //       }).first
+                                        //     : CompanyModel(
+                                        //         nameCompany: l10n.nothing,
+                                        //       )),
+                                        phone:
+                                            // companyProvider.companies
+                                            //         .where((element) {
+                                            //           return element.id ==
+                                            //                   jop.companyId &&
+                                            //               element.phone != null;
+                                            //         })
+                                            //         .toList()
+                                            //         .isNotEmpty
+                                            (jop.company != null &&
+                                                    jop.company!.phone != null)
+                                                ? jop.company!.phone!
+                                                // companyProvider.companies
+                                                //     .where((element) {
+                                                //       return element.id ==
+                                                //               jop.companyId &&
+                                                //           element.phone != null;
+                                                //     })
+                                                //     .toList()
+                                                //     .first
+                                                //     .phone!
+                                                : (jop.company != null &&
+                                                        jop.company!.phone2 !=
+                                                            null)
+                                                    // companyProvider.companies
+                                                    //         .where((element) {
+                                                    //           return element.id ==
+                                                    //                   jop
+                                                    //                       .companyId &&
+                                                    //               element.phone2 !=
+                                                    //                   null;
+                                                    //         })
+                                                    //         .toList()
+                                                    //         .isNotEmpty
+                                                    ? jop.company!.phone2!
+                                                    // companyProvider.companies
+                                                    //     .where((element) {
+                                                    //       return element.id ==
+                                                    //               jop
+                                                    //                   .companyId &&
+                                                    //           element.phone2 !=
+                                                    //               null;
+                                                    //     })
+                                                    //     .toList()
+                                                    //     .first
+                                                    //     .phone2
+                                                    //     .toString()
+                                                    : l10n.nothing,
                                         icon: Icons.person,
-                                        title: (companyProvider.companies
-                                                    .any((element) {
-                                          return element.id == jop.companyId;
-                                        })
-                                                ? companyProvider.companies
-                                                    .where((element) {
-                                                    return element.id ==
-                                                        jobsProvider.jobs[index]
-                                                            .companyId;
-                                                  }).first
-                                                // toList()[0]
+                                        title: ((jop.company != null)
+                                                ? jop.company
                                                 : CompanyModel(
                                                     nameCompany: l10n.nothing,
-                                                  ))
+                                                  ))!
                                             .nameCompany
                                             .toString(),
+                                        // (companyProvider.companies
+                                        //             .any((element) {
+                                        //   return element.id == jop.companyId;
+                                        // })
+                                        //         ? companyProvider.companies
+                                        //             .where((element) {
+                                        //             return element.id ==
+                                        //                 jobsProvider.jobs[index]
+                                        //                     .companyId;
+                                        //           }).first
+                                        //         // toList()[0]
+                                        //         : CompanyModel(
+                                        //             nameCompany: l10n.nothing,
+                                        //           ))
+                                        //     .nameCompany
+                                        //     .toString(),
                                         subtitle: jop.nameJob.toString(),
                                         onTap: () {
                                           Navigator.push(
@@ -216,12 +238,13 @@ class HomeBody extends StatelessWidget {
                                               builder: (context) =>
                                                   JopInfoScreen(
                                                 jobData: jop,
-                                                companyData: companyProvider
-                                                    .companies
-                                                    .where((element) {
-                                                  return element.id ==
-                                                      jop.companyId;
-                                                }).first,
+                                                companyData: jop.company!,
+                                                // companyProvider
+                                                //     .companies
+                                                //     .where((element) {
+                                                //   return element.id ==
+                                                //       jop.companyId;
+                                                // }).first,
                                               ),
                                             ),
                                           );
@@ -250,7 +273,9 @@ class HomeBody extends StatelessWidget {
               child: IconButton(
                 tooltip: l10n.toupdate,
                 onPressed: () {
-                  context.read<JobsProvider>().getJobs();
+                  context.read<JobsProvider>().getJobsByAI(
+                      searcherId: searcherProvider.currentSearcher!.id ?? 0);
+                  // context.read<JobsProvider>().getJobs();
                 },
                 icon: const Icon(
                   Icons.refresh,

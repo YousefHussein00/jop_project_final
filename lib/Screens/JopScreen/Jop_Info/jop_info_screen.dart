@@ -10,6 +10,7 @@ import 'package:jop_project/Models/job_advertisement_model.dart';
 import 'package:jop_project/Models/orders_model.dart';
 import 'package:jop_project/Providers/Orders/order_provider.dart';
 import 'package:jop_project/Providers/SignUp/searcher_signin_login_provider.dart';
+import 'package:jop_project/Providers/locale_provider.dart';
 import 'package:jop_project/Screens/JopScreen/Profile/cv_screen.dart';
 import 'package:jop_project/Screens/ShareScreen/Login/login_screen.dart';
 import 'package:jop_project/components/background.dart';
@@ -248,22 +249,22 @@ class InfoBodyWidget extends StatelessWidget {
         ),
         RectanglText(description: jobData.descrip.toString()),
         const SizedBox(height: 16),
-        _buildInfoItem(
-            Icons.work, l10n.nameinformation, jobData.nameJob.toString()),
-        _buildInfoItem(
-            Icons.work, l10n.locationaddress, jobData.location.toString()),
+        _buildInfoItem(Icons.work, l10n.nameinformation,
+            jobData.nameJob.toString(), context),
+        _buildInfoItem(Icons.work, l10n.locationaddress,
+            jobData.location.toString(), context),
         _buildInfoItem(Icons.school, l10n.academicqualifications,
-            jobData.special.toString()),
-        _buildInfoItem(
-            Icons.school, l10n.experiences, jobData.periodExper.toString()),
+            jobData.special.toString(), context),
+        _buildInfoItem(Icons.school, l10n.experiences,
+            jobData.periodExper.toString(), context),
         _buildInfoItem(Icons.access_time, l10n.typework,
-            jobData.permanenceType.toString()),
+            jobData.permanenceType.toString(), context),
+        _buildInfoItem(Icons.location_on, l10n.area,
+            jobData.typeOfPlace.toString(), context),
+        _buildInfoItem(Icons.calendar_today, l10n.applperiod,
+            jobData.timeWork.toString(), context),
         _buildInfoItem(
-            Icons.location_on, l10n.area, jobData.typeOfPlace.toString()),
-        _buildInfoItem(
-            Icons.calendar_today, l10n.applperiod, jobData.timeWork.toString()),
-        _buildInfoItem(
-            Icons.attach_money, l10n.salary, jobData.salry.toString()),
+            Icons.attach_money, l10n.salary, jobData.salry.toString(), context),
         const SizedBox(height: 24),
         SizedBox(
           width: double.infinity,
@@ -474,69 +475,76 @@ class InfoBodyWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoItem(IconData icon, String title, String value) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: const BoxDecoration(
-                color: Color(0xFF6B8CC7),
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(15),
-                    bottomLeft: Radius.circular(15)),
-              ),
-              child: Text(
-                value,
-                textDirection: TextDirection.rtl,
-                textAlign: TextAlign.start,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
+  Widget _buildInfoItem(
+      IconData icon, String title, String value, BuildContext context) {
+    return Directionality(
+      textDirection: context.read<LocaleProvider>().locale?.languageCode == 'en'
+          ? TextDirection.ltr
+          : TextDirection.ltr,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Expanded(
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF6B8CC7),
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(15),
+                      bottomLeft: Radius.circular(15)),
+                ),
+                child: Text(
+                  value,
+                  textDirection: TextDirection.rtl,
+                  textAlign: TextAlign.start,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                    topRight: Radius.circular(15),
-                    bottomRight: Radius.circular(15)),
-                border: Border.all(color: kBorderColor)),
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-            margin: const EdgeInsets.symmetric(horizontal: 2),
-            child: Text(
-              title,
-              textAlign: TextAlign.end,
-              style: const TextStyle(
-                color: kBorderColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
+            Container(
+              decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(15),
+                      bottomRight: Radius.circular(15)),
+                  border: Border.all(color: kBorderColor)),
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+              margin: const EdgeInsets.symmetric(horizontal: 2),
+              child: Text(
+                title,
+                textAlign: TextAlign.end,
+                style: const TextStyle(
+                  color: kBorderColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
               ),
             ),
-          ),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 4),
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey.shade300),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 4),
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: Icon(
+                icon,
+                color: const Color(0xFF6B8CC7),
+                size: 20,
+              ),
             ),
-            child: Icon(
-              icon,
-              color: const Color(0xFF6B8CC7),
-              size: 20,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

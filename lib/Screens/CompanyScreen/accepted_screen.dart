@@ -24,7 +24,7 @@ class AcceptedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final searchersProvider = Provider.of<SearchersProvider>(context);
+    Provider.of<SearchersProvider>(context);
     final orders = Provider.of<OrderProvider>(context);
     final jobsProvider = Provider.of<JobsProvider>(context);
     final companySigninLoginProvider =

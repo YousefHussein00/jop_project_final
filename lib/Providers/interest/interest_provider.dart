@@ -4,16 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:jop_project/Controller/api_controller.dart';
 import 'package:jop_project/Models/skils_model.dart';
 
-class DesiresProvider extends ChangeNotifier {
+class InterestProvider extends ChangeNotifier {
   final ApiController _apiController = ApiController();
 
   //setters
-  List<SkilsModel> _desires = [];
+  List<SkilsModel> _interest = [];
   bool _isLoading = false;
   String? _error;
 
   // Getters
-  List<SkilsModel> get desires => _desires;
+  List<SkilsModel> get interest => _interest;
   bool get isLoading => _isLoading;
   String? get error => _error;
 
@@ -31,7 +31,7 @@ class DesiresProvider extends ChangeNotifier {
         // headers: {'Authorization': 'Bearer ${token}'},
       );
       if (response.isNotEmpty) {
-        _desires = response;
+        _interest = response;
       }
     } catch (e) {
       _error = e.toString();
@@ -42,22 +42,24 @@ class DesiresProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> addDesires({required SkilsModel desiresModel}) async {
+  Future<void> addDesires(
+      {required SkilsModel desiresModel, required int searcherId}) async {
     try {
       _isLoading = true;
       _error = null;
       notifyListeners();
 
       final response = await _apiController.post<SkilsModel>(
-        endpoint: 'interests',
+        endpoint: 'interests/PostInterst_us?searcherId=$searcherId',
         data: desiresModel.toJson(),
         fromJson: SkilsModel.fromJson,
       );
+      log(response.toJson().toString(), name: 'response_add_desires');
       if (response.id != null) {
-        log(_desires.length.toString(), name: '_desires Befor add _desires');
-        log(response.name.toString(), name: 'response_add_desires');
-        _desires.add(response);
-        log(_desires.length.toString(), name: '_desires after add _desires');
+        // log(_interest.length.toString(), name: '_desires Befor add _desires');
+        // log(response.name.toString(), name: 'response_add_desires');
+        _interest.add(response);
+        // log(_interest.length.toString(), name: '_desires after add _desires');
         getDesires();
       } else {
         throw Exception('فشل إنشاء الرغبة حاول مجدداً');

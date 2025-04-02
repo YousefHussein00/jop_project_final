@@ -28,7 +28,6 @@ class SkillsProvider extends ChangeNotifier {
         fromJson: (json) => (json is List)
             ? json.map((item) => SkilsModel.fromJson(item)).toList()
             : json['items'].map((item) => SkilsModel.fromJson(item)).toList(),
-        // headers: {'Authorization': 'Bearer ${token}'},
       );
       if (response.isNotEmpty) {
         _skills = response;
@@ -42,22 +41,24 @@ class SkillsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> addSkill({required SkilsModel skilsModel}) async {
+  Future<void> addSkill(
+      {required SkilsModel skilsModel, required int searcherId}) async {
     try {
       _isLoading = true;
       _error = null;
       notifyListeners();
 
       final response = await _apiController.post<SkilsModel>(
-        endpoint: 'Skils',
+        endpoint: 'Skils/PostSkilAndSkal_Us?searcherId=$searcherId',
         data: skilsModel.toJson(),
         fromJson: SkilsModel.fromJson,
       );
+      log(response.toJson().toString(), name: 'response_add_skills');
       if (response.id != null) {
-        log(_skills.length.toString(), name: '_skills Befor add _skills');
-        log(response.name.toString(), name: 'response_add_skills');
+        // log(_skills.length.toString(), name: '_skills Befor add _skills');
+        // log(response.name.toString(), name: 'response_add_skills');
         _skills.add(response);
-        log(_skills.length.toString(), name: '_jobs after add _skills');
+        // log(_skills.length.toString(), name: '_jobs after add _skills');
       } else {
         throw Exception('فشل إنشاء المهارة حاول مجدداً');
       }

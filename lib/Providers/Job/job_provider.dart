@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jop_project/Controller/api_controller.dart';
 import 'package:jop_project/Models/job_advertisement_model.dart';
+import 'package:jop_project/Models/job_recommendation_dto_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class JobsProvider with ChangeNotifier {
@@ -30,6 +31,64 @@ class JobsProvider with ChangeNotifier {
   String? get error => _error;
 
   TextEditingController get controller => _controller;
+
+  Future<void> getJobsByAI({required int searcherId}) async {
+    if (searcherId != 0) {
+      try {
+        _isLoading = true;
+        _error = null;
+        notifyListeners();
+
+        // // محاولة جلب الدول من التخزين المحلي أولاً
+        final prefs = await SharedPreferences.getInstance();
+
+        // جلب البيانات من API
+        final response =
+            await _apiController.get<List<JobRecommendationDtoModel>>(
+          endpoint: 'EnhancedJobRecommendation/recommend2/$searcherId',
+          fromJson: (json) => (json is List)
+              ? json
+                  .map((item) => JobRecommendationDtoModel.fromJson(item))
+                  .toList()
+              : json['items']
+                  .map((item) => JobRecommendationDtoModel.fromJson(item))
+                  .toList(),
+        );
+        if (response.isNotEmpty) {
+          _jobs = response.map((job) => job.job!).toList();
+          // تخزين البيانات محلياً
+          await prefs.setString(
+              'jobs', json.encode(_jobs.map((jop) => jop.toJson()).toList()));
+        }
+        // notifyListeners();
+      } catch (e) {
+        // محاولة جلب الدول من التخزين المحلي أولاً
+        // try {
+        //   final prefs = await SharedPreferences.getInstance();
+        //   final cachedData = prefs.getString('jobs');
+
+        //   if (cachedData != null) {
+        //     final List<dynamic> decodedData = json.decode(cachedData);
+        //     _jobs = decodedData
+        //         .map((item) => JobAdvertisementModel.fromJson(item))
+        //         .toList();
+        //     notifyListeners();
+        //   } else {
+        //     log('خطأ في جلب الوظائف: $e');
+        //     getJobs();
+        //     // _error = 'فشل في جلب قائمة الوظائف';
+        //     notifyListeners();
+        //   }
+        // } catch (e) {
+        //   getJobs();
+        // }
+      } finally {
+        _isLoading = false;
+        notifyListeners();
+      }
+    }
+    // getJobs();
+  }
 
   Future<void> getJobs() async {
     try {

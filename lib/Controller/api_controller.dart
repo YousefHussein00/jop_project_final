@@ -102,6 +102,7 @@ class ApiController {
           requestOptions: response.requestOptions,
           response: response,
           message: 'فشل في إرسال البيانات: ${response.statusCode}',
+          error: response.data,
         );
       }
     } catch (e) {

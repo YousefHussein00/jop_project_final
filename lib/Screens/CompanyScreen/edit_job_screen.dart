@@ -11,6 +11,8 @@ import 'package:jop_project/responsive.dart';
 import 'package:jop_project/size_config.dart';
 import 'package:provider/provider.dart';
 
+import '../../Providers/locale_provider.dart';
+
 class EditJopScreen extends StatefulWidget {
   final JobAdvertisementModel jobAdvertisementModel;
   const EditJopScreen({
@@ -400,92 +402,97 @@ class _InfoBodyWidgetState extends State<InfoBodyWidget> {
 
   Widget _buildInfoItem(IconData icon, String title,
       {required TextEditingController controller, bool enabled = true}) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: SizedBox(
-        height: (SizeConfig.screenW! <= 750) ? 35 : 35,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Flexible(
-              child: Directionality(
-                textDirection: TextDirection.rtl,
-                child: TextFormField(
-                  enabled: enabled,
-                  // autofocus: true,
+    return Directionality(
+      textDirection: context.read<LocaleProvider>().locale?.languageCode == 'en'
+          ? TextDirection.ltr
+          : TextDirection.ltr,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        child: SizedBox(
+          height: (SizeConfig.screenW! <= 750) ? 35 : 35,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Flexible(
+                child: Directionality(
                   textDirection: TextDirection.rtl,
-                  style: const TextStyle(fontSize: 11),
-                  controller: controller,
-                  textAlign: TextAlign.right,
-                  decoration: InputDecoration(
-                    isDense: true,
-                    // suffixIcon: const Icon(
-                    //   Icons.edit,
-                    //   color: Colors.black,
-                    //   size: 11,
-                    // ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 0.0, horizontal: 6.0),
-                    border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(25),
-                            bottomLeft: Radius.circular(25))),
-                    hintText: title,
-                    hintStyle: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 22,
+                  child: TextFormField(
+                    enabled: enabled,
+                    // autofocus: true,
+                    textDirection: TextDirection.rtl,
+                    style: const TextStyle(fontSize: 11),
+                    controller: controller,
+                    textAlign: TextAlign.right,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      // suffixIcon: const Icon(
+                      //   Icons.edit,
+                      //   color: Colors.black,
+                      //   size: 11,
+                      // ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 0.0, horizontal: 6.0),
+                      border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(25),
+                              bottomLeft: Radius.circular(25))),
+                      hintText: title,
+                      hintStyle: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 22,
+                      ),
+                      errorStyle: const TextStyle(
+                        fontSize: 5,
+                      ),
                     ),
-                    errorStyle: const TextStyle(
-                      fontSize: 5,
-                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'الحقل مطلوب *';
+                      }
+                      return null;
+                    },
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'الحقل مطلوب *';
-                    }
-                    return null;
-                  },
                 ),
               ),
-            ),
-            Container(
-              width: defaultPadding * 7,
-              decoration: const BoxDecoration(
-                color: Color(0xFF6B8CC7),
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(15),
-                    bottomRight: Radius.circular(15)),
+              Container(
+                width: defaultPadding * 7,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF6B8CC7),
+                  borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(15),
+                      bottomRight: Radius.circular(15)),
+                ),
+                padding:
+                    const EdgeInsets.only(top: 7, bottom: 7, left: 3, right: 5),
+                margin: const EdgeInsets.symmetric(horizontal: 2),
+                child: Text(
+                  title,
+                  textAlign: TextAlign.start,
+                  overflow: TextOverflow.ellipsis,
+                  textDirection: TextDirection.rtl,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
+                ),
               ),
-              padding:
-                  const EdgeInsets.only(top: 7, bottom: 7, left: 3, right: 5),
-              margin: const EdgeInsets.symmetric(horizontal: 2),
-              child: Text(
-                title,
-                textAlign: TextAlign.start,
-                overflow: TextOverflow.ellipsis,
-                textDirection: TextDirection.rtl,
-                style: const TextStyle(
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
                   color: Colors.white,
-                  fontSize: 14,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: Icon(
+                  icon,
+                  color: const Color(0xFF6B8CC7),
+                  size: 20,
                 ),
               ),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 4),
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: Icon(
-                icon,
-                color: const Color(0xFF6B8CC7),
-                size: 20,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -572,20 +579,72 @@ class CardMainInfoWidget extends StatelessWidget {
         child: Row(
           children: [
             Flexible(
+                child: Center(
               child: Container(
-                width: 50,
-                height: 50,
+                width: 100,
+                height: 100,
                 decoration: BoxDecoration(
-                  image: DecorationImage(
-                    fit: BoxFit.fill,
-                    image: companyProvider.currentCompany!.img == null
-                        ? const AssetImage('assets/images/YKB.png')
-                        : NetworkImage(companyProvider.currentCompany!.img!),
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  border: Border.all(
+                    color: Colors.white,
+                    width: 2,
                   ),
-                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(50),
+                  child:
+                      //  imagePath != null && imagePath != ''
+                      //     ?
+                      Image.network(
+                    companyProvider.currentCompany!.img ?? '',
+                    fit: BoxFit.contain,
+                    filterQuality: FilterQuality.high,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(loadingProgress.expectedTotalBytes != null
+                              ? (loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!)
+                                  .toStringAsFixed(2)
+                              : ''),
+                          const CircularProgressIndicator(),
+                        ],
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset('assets/images/YKB.png');
+                      //  const Icon(
+                      //   Icons.person,
+                      //   size: 50,
+                      // );
+                    },
+                  ),
+                  // : const Icon(
+                  //     Icons.person,
+                  //     size: 50,
+                  //   ),
                 ),
               ),
-            ),
+            )
+                // Container(
+                //   width: 50,
+                //   height: 50,
+                //   decoration: BoxDecoration(
+                //     image: DecorationImage(
+                //       fit: BoxFit.fill,
+                //       image: companyProvider.currentCompany!.img == null
+                //           ? const AssetImage('assets/images/YKB.png')
+                //           : NetworkImage(companyProvider.currentCompany!.img!),
+                //     ),
+                //     borderRadius: BorderRadius.circular(100),
+                //   ),
+                // ),
+                ),
             const SizedBox(width: 16),
             Expanded(
               flex: 4,
