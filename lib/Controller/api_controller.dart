@@ -3,8 +3,6 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 
 class ApiController {
-  // static const String _baseUrl = 'https://bar.somee.com/api/';
-  // static const String _baseUrl = 'http://192.168.137.1:5062/api/';
   static const String _baseUrl = 'https://alumniclubsoft.somee.com/api/';
   final Dio _dio;
 
@@ -201,37 +199,3 @@ class ApiController {
     }
   }
 }
-  // // مثال على الاستخدام:
-  // Future<List<ApplicantModel>> getApplicants() async {
-  //   return get<ApplicantModel>(
-  //     endpoint: 'applicants',
-  //     fromJson: (json) => ApplicantModel.fromJson(json),
-  //     queryParameters: {
-  //       'page': '1',
-  //       'limit': '10',
-  //     },
-  //   );
-  // }
-
-  // // مثال آخر للشركات:
-  // Future<List<CompanyModel>> getCompanies() async {
-  //   return get<CompanyModel>(
-  //     endpoint: 'companies',
-  //     fromJson: (json) => CompanyModel.fromJson(json),
-  //     headers: {
-  //       'X-Custom-Header': 'value',
-  //     },
-  //   );
-  // }
-
-// مثال على استخدام الدالة:
-/*
-final apiController = ApiController();
-
-try {
-  final applicants = await apiController.getApplicants();
-  // استخدام البيانات...
-} catch (e) {
-  print('Error: $e');
-}
-*/

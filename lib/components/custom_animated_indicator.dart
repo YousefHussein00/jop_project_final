@@ -17,9 +17,6 @@ class _AnimatedProgressBarState extends State<AnimatedProgressBar>
 
   @override
   void initState() {
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   const InitialScreen();
-    // });
     super.initState();
     _controller = AnimationController(
       vsync: this,

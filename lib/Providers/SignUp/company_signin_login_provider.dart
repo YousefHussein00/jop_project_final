@@ -34,7 +34,7 @@ class CompanySigninLoginProvider extends ChangeNotifier {
 
       if (token != null && userType == "Admin" && userId != null) {
         // محاولة جلب الدول من التخزين المحلي أولاً
-        final prefs = await SharedPreferences.getInstance();
+        // final prefs = await SharedPreferences.getInstance();
         final cachedData = prefs.getString('Companies');
 
         if (cachedData != null) {

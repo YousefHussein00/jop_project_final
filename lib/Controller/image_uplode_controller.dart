@@ -360,7 +360,7 @@ class ImageUploadController {
     }
   }
 
-  Future<String?> pickAndUploadXlsxFile(BuildContext context) async {
+  Future<String?> pickAndUploadPdfFile(BuildContext context) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf', 'docx'],

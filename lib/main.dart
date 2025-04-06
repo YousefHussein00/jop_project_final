@@ -82,9 +82,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LocaleProvider(prefs)..init()),
         ChangeNotifierProvider(create: (_) => SettingsProvider(prefs)),
         ChangeNotifierProvider(create: (_) => CompanySigninLoginProvider()),
+        ChangeNotifierProvider(create: (_) => SearcherSigninLoginProvider()),
         ChangeNotifierProvider(create: (_) => CountryProvider()),
         ChangeNotifierProvider(create: (_) => JobsProvider() /*..getJobs()*/),
-        ChangeNotifierProvider(create: (_) => SearcherSigninLoginProvider()),
         ChangeNotifierProvider(
             create: (_) => CompaniesProvider()..getAllCompanies()),
         ChangeNotifierProvider(create: (_) => SkillsProvider()..getSkills()),
@@ -92,25 +92,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
             create: (_) => ExperienceProvider()..getExperiences()),
         ChangeNotifierProvider(create: (_) => OrderProvider()..getOrders()),
-        // ChangeNotifierProvider(
-        //     create: (_) => OrderProvider()
-        //       ..getOrdersByCompanyId(
-        //           companyId: _
-        //               .read<CompanySigninLoginProvider>()
-        //               .currentCompany!
-        //               .id!)),
         ChangeNotifierProvider(
             create: (_) => SearchersProvider()..getAllSearchers()),
         ChangeNotifierProvider(create: (_) => ChatProvider()),
-        // ChangeNotifierProvider(
-        //     create: (_) => ChatProvider()
-        //       ..getChatsByCompanyIdLignth(_
-        //           .read<CompanySigninLoginProvider>()
-        //           .currentCompany!
-        //           .id!
-        //           .toString())),
         ChangeNotifierProvider(create: (_) => StatisticsProvider()),
-        // ChangeNotifierProvider(create: (_) => SearcherSigninLoginProvider()..getSearcherById()),
       ],
       child: Consumer2<LocaleProvider, SettingsProvider>(
           builder: (context, localeProvider, settingsProvider, child) {
@@ -144,7 +129,7 @@ class MyApp extends StatelessWidget {
             }
             return const Locale('en');
           },
-          home: localeProvider.seenOnboarding
+          home: localeProvider.seenOnboarding == true
               ? const InitialScreen()
               : const OnboardingScreen(),
         );

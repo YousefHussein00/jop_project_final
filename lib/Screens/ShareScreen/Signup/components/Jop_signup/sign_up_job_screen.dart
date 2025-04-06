@@ -65,10 +65,10 @@ class MobileSignupScreen extends StatelessWidget {
     return const Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        WelcomeImage(
-          imageHeight: 150,
-          imageSrc: 'assets/images/Login-rafiki.png',
-        ),
+        // WelcomeImage(
+        //   imageHeight: 150,
+        //   imageSrc: 'assets/images/Login-rafiki.png',
+        // ),
         Row(
           children: [
             Spacer(),

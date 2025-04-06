@@ -361,27 +361,6 @@ class SearcherSigninLoginProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-  // إعادة تعيين كلمة المرور
-  // Future<void> resetPassword({required String email}) async {
-  //   try {
-  //     _isLoading = true;
-  //     _error = null;
-  //     notifyListeners();
-
-  //     await _apiController.post<void>(
-  //       endpoint: 'companies/reset-password',
-  //       data: {'email': email},
-  //       fromJson: (_) => null,
-  //     );
-  //   } catch (e) {
-  //     _error = e.toString();
-  //     notifyListeners();
-  //     rethrow;
-  //   } finally {
-  //     _isLoading = false;
-  //     notifyListeners();
-  //   }
-  // }
 
   Future<void> getSearcherById() async {
     try {

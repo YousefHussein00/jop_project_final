@@ -82,7 +82,7 @@ class CVScreen extends StatelessWidget {
                       ImageUploadController imageUploadController =
                           ImageUploadController();
                       var uploadPdfCv = await imageUploadController
-                          .pickAndUploadXlsxFile(context)
+                          .pickAndUploadPdfFile(context)
                           .then(
                         (value) {
                           // Navigator.pop(context);
