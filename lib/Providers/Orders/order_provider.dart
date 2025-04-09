@@ -84,9 +84,6 @@ class OrderProvider extends ChangeNotifier {
         endpoint: 'Orders',
         data: ordersModel.toJson(),
         fromJson: OrdersModel.fromJson,
-        headers: {
-          // 'Authorization': 'Bearer $_token',
-        },
       );
       if (response.jobAdvertisementId != null) {
         log(_orders.length.toString(), name: '_orders Befor add _orders');
@@ -94,16 +91,11 @@ class OrderProvider extends ChangeNotifier {
         log(response.jobAdvertisementId.toString(),
             name: 'response_add_orders');
         log(jobData.companyId.toString(), name: 'jobData_companyId');
-        _orders.add(response);
+        _orders.add(response);ؤ
         CompaniesProvider companiesProvider = CompaniesProvider();
         await companiesProvider.getAllCompanies();
         CompanyModel com =
             (companiesProvider.getCompanyById(jobData.companyId!)!);
-        log(com.id.toString(), name: 'com_id');
-        // var company = companiesProvider.companies
-        //     .firstWhere((element) => element.id == jobData.companyId);
-        // log(company.id.toString());
-        // log(company.id.toString(), name: 'company_companyId');
         final order = _orders
             .where((element) => jobData.id == element.jobAdvertisementId)
             .toList();

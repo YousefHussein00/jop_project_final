@@ -60,28 +60,27 @@ class JobsProvider with ChangeNotifier {
           await prefs.setString(
               'jobs', json.encode(_jobs.map((jop) => jop.toJson()).toList()));
         }
-        // notifyListeners();
       } catch (e) {
         // محاولة جلب الدول من التخزين المحلي أولاً
-        // try {
-        //   final prefs = await SharedPreferences.getInstance();
-        //   final cachedData = prefs.getString('jobs');
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          final cachedData = prefs.getString('jobs');
 
-        //   if (cachedData != null) {
-        //     final List<dynamic> decodedData = json.decode(cachedData);
-        //     _jobs = decodedData
-        //         .map((item) => JobAdvertisementModel.fromJson(item))
-        //         .toList();
-        //     notifyListeners();
-        //   } else {
-        //     log('خطأ في جلب الوظائف: $e');
-        //     getJobs();
-        //     // _error = 'فشل في جلب قائمة الوظائف';
-        //     notifyListeners();
-        //   }
-        // } catch (e) {
-        //   getJobs();
-        // }
+          if (cachedData != null) {
+            final List<dynamic> decodedData = json.decode(cachedData);
+            _jobs = decodedData
+                .map((item) => JobAdvertisementModel.fromJson(item))
+                .toList();
+            notifyListeners();
+          } else {
+            log('خطأ في جلب الوظائف: $e');
+            getJobs();
+            // _error = 'فشل في جلب قائمة الوظائف';
+            notifyListeners();
+          }
+        } catch (e) {
+          getJobs();
+        }
       } finally {
         _isLoading = false;
         notifyListeners();

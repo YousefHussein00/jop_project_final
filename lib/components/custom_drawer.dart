@@ -545,47 +545,6 @@ class CustomDrawer extends StatelessWidget {
       ),
     );
   }
-
-  // void _showLanguageDialog(BuildContext context) {
-  //   final l10n = AppLocalizations.of(context);
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) => Dialog(
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.circular(15),
-  //       ),
-  //       child: Container(
-  //         padding:  EdgeInsets.all(16),
-  //         child: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: [
-  //              Text(
-  //               l10n.thelanguage,
-  //               style: TextStyle(
-  //                 fontSize: 18,
-  //                 fontWeight: FontWeight.bold,
-  //               ),
-  //             ),
-  //             const SizedBox(height: 16),
-  //             _buildLanguageOption('العربية'),
-  //             _buildLanguageOption('الانجليزية'),
-  //             _buildLanguageOption('حسب لغة الجهاز'),
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildLanguageOption(String language) {
-  //   return RadioListTile(
-  //     title: Text(language),
-  //     value: language,
-  //     groupValue: 'العربية',
-  //     onChanged: (value) {},
-  //   );
-  // }
-
   Widget _buildLanguageSelector(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final localeProvider = context.watch<LocaleProvider>();
