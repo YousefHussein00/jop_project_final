@@ -91,7 +91,7 @@ class OrderProvider extends ChangeNotifier {
         log(response.jobAdvertisementId.toString(),
             name: 'response_add_orders');
         log(jobData.companyId.toString(), name: 'jobData_companyId');
-        _orders.add(response);ؤ
+        _orders.add(response);
         CompaniesProvider companiesProvider = CompaniesProvider();
         await companiesProvider.getAllCompanies();
         CompanyModel com =
